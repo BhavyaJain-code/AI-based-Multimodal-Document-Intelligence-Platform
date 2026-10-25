@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multimodal Document Intelligence Platform</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-top">
+      <div>
+        <div class="header-title">Multimodal Document Intelligence Platform</div>
+        <div class="header-subtitle">High-Precision Text, PDF, Visual & Tabular Extraction, Analysis and Semantic RAG Engine</div>
+      </div>
+      <div>
+        <span class="status-badge" id="engineStatusBadge">Engine: Offline Heuristic Mode</span>
+        <span class="status-badge" id="docCountBadge">Documents: 0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div class="nav-container">
+      <button class="nav-tab active" data-tab="tab-ingestion">1. Ingestion & Library</button>
+      <button class="nav-tab" data-tab="tab-intelligence">2. Document Intelligence</button>
+      <button class="nav-tab" data-tab="tab-qa">3. Multimodal Q&A (RAG)</button>
+      <button class="nav-tab" data-tab="tab-schema">4. Schema Extractor</button>
+      <button class="nav-tab" data-tab="tab-compare">5. Document Comparison</button>
+      <button class="nav-tab" data-tab="tab-settings">6. Settings & Model</button>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main>
+
+    <!-- Tab 1: Ingestion & Library -->
+    <div id="tab-ingestion" class="tab-pane active">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Document Ingestion & File Processing</div>
+            <div class="panel-desc">Upload multimodal files (PDF, TXT, CSV, JSON, PNG, JPG) to index, chunk, and extract intelligence.</div>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-sm" id="seedSamplesBtn">Load Sample Test Suite</button>
+          </div>
+        </div>
+
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-title">Click to Browse or Drag and Drop Files Here</div>
+          <div class="dropzone-text">Supported formats: PDF (.pdf), Text (.txt, .md), Tabular (.csv), Structured (.json), Visual (.png, .jpg, .webp)</div>
+          <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.txt,.md,.csv,.json,.png,.jpg,.jpeg,.webp">
+          <button class="btn" type="button" onclick="document.getElementById('fileInput').click()">Select Local Files</button>
+        </div>
+
+        <div id="uploadStatusMessage" style="margin-bottom: 12px; font-weight: bold;"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Indexed Documents Corpus</div>
+          <button class="btn btn-secondary btn-sm" id="refreshDocsBtn">Refresh List</button>
+        </div>
+        <div class="table-container">
+          <table id="documentsTable">
+            <thead>
+              <tr>
+                <th>Document Name</th>
+                <th>Format</th>
+                <th>Classification</th>
+                <th>Words</th>
+                <th>Est. Tokens</th>
+                <th>Chunks</th>
+                <th>Uploaded</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="documentsTableBody">
+              <tr>
+                <td colspan="8" style="text-align: center; padding: 24px; font-style: italic;">No documents indexed yet. Upload files above or click "Load Sample Test Suite".</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Document Intelligence -->
+    <div id="tab-intelligence" class="tab-pane">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Deep Document Intelligence & Entity Extraction</div>
+            <div class="panel-desc">Automated categorization, executive synthesis, named entities, action items, and risk detection.</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; align-items: flex-end; margin-bottom: 16px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 250px;">
+            <label for="intelDocSelect">Select Target Document:</label>
+            <select id="intelDocSelect">
+              <option value="">-- Choose an indexed document --</option>
+            </select>
+          </div>
+          <button class="btn" id="runIntelBtn">Run Intelligence Scan</button>
+        </div>
+
+        <div id="intelLoadingNotice" style="display: none; margin-bottom: 14px;" class="loading-indicator">
+          Processing document with multimodal intelligence engine... Please wait.
+        </div>
+
+        <div id="intelResultsContainer" style="display: none;">
+          <div class="grid-2">
+            <div class="info-box">
+              <div class="info-box-title">Document Classification & Confidence</div>
+              <p><strong>Detected Category:</strong> <span id="intelCategory">-</span></p>
+              <p><strong>Confidence Rating:</strong> <span id="intelConfidence">-</span></p>
+              <p><strong>Sentiment & Tone:</strong> <span id="intelTone">-</span></p>
+              <p><strong>Intelligence Provider:</strong> <span id="intelProvider">-</span></p>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title">Executive Summary</div>
+              <p id="intelSummary" style="font-size: 15px; line-height: 1.6;">-</p>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top: 14px; background: #ffffff;">
+            <div class="panel-header" style="margin-bottom: 10px;">
+              <div class="panel-title" style="font-size: 16px;">Extracted Named Entities & Metrics</div>
+            </div>
+            <div class="grid-3">
+              <div class="info-box">
+                <div class="info-box-title">Organizations & Vendors</div>
+                <div class="entity-tag-list" id="intelOrgs"><em>None detected</em></div>
+              </div>
+              <div class="info-box">
+                <div class="info-box-title">Dates & Deadlines</div>
+                <div class="entity-tag-list" id="intelDates"><em>None detected</em></div>
+              </div>
+              <div class="info-box">
+                <div class="info-box-title">Monetary Values & Currency</div>
+                <div class="entity-tag-list" id="intelMonetary"><em>None detected</em></div>
+              </div>
+            </div>
+            <div class="grid-2" style="margin-top: 12px;">
+              <div class="info-box">
+                <div class="info-box-title">Numerical Metrics & KPIs</div>
+                <div class="entity-tag-list" id="intelMetrics"><em>None detected</em></div>
+              </div>
+              <div class="info-box">
+                <div class="info-box-title">People & Roles</div>
+                <div class="entity-tag-list" id="intelPeople"><em>None detected</em></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top: 14px;">
+            <div class="info-box">
+              <div class="info-box-title">Key Action Items & Next Steps</div>
+              <ul class="bullet-list" id="intelActionItems">
+                <li>No action items extracted.</li>
+              </ul>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title">Potential Compliance Risks & Ambiguities</div>
+              <ul class="bullet-list" id="intelRisks">
+                <li>No flags reported.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Multimodal Q&A (RAG) -->
+    <div id="tab-qa" class="tab-pane">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Multimodal Document Q&A & Semantic RAG</div>
+            <div class="panel-desc">Ask natural-language questions grounded in your uploaded documents with cited source fragments.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="qaDocScope">Query Scope:</label>
+          <select id="qaDocScope">
+            <option value="">Search Across Entire Corpus (All Documents)</option>
+          </select>
+        </div>
+
+        <div class="quick-prompts">
+          <strong>Suggested Inquiries:</strong>
+          <span class="prompt-pill" onclick="setQueryPrompt('What are the payment terms, due dates, and totals?')">Payment terms & totals</span>
+          <span class="prompt-pill" onclick="setQueryPrompt('Summarize key obligations, governing law, and liabilities.')">Obligations & liabilities</span>
+          <span class="prompt-pill" onclick="setQueryPrompt('What are the benchmark conclusions and reported metrics?')">Benchmark conclusions & metrics</span>
+          <span class="prompt-pill" onclick="setQueryPrompt('List all identified parties, signatories, and contact details.')">Parties & signatories</span>
+        </div>
+
+        <div class="chat-window" id="chatWindow">
+          <div class="chat-message">
+            <div class="chat-sender">System Assistant</div>
+            <div class="chat-text">Welcome to the Multimodal Document Q&A console. Select a document or search all loaded files, enter your inquiry below, and click "Submit Query".</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="qaInput" placeholder="Type your document inquiry here (e.g., What are the payment terms and totals?)...">
+          <button class="btn" id="qaSubmitBtn">Submit Query</button>
+        </div>
+        <div id="qaLoadingNotice" style="display: none; margin-top: 8px;" class="loading-indicator">
+          Synthesizing grounded response from document index...
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Schema Extractor -->
+    <div id="tab-schema" class="tab-pane">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Structured Schema Extractor</div>
+            <div class="panel-desc">Convert unstructured documents and scans into standardized JSON schemas or relational tables.</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="schemaDocSelect">Select Document to Extract From:</label>
+            <select id="schemaDocSelect">
+              <option value="">-- Choose an indexed document --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="schemaTypeSelect">Target Schema Definition:</label>
+            <select id="schemaTypeSelect">
+              <option value="invoice">Commercial Invoice / Billing Statement</option>
+              <option value="contract">Legal Agreement / Contract Terms</option>
+              <option value="resume">Professional Resume / CV Profile</option>
+              <option value="research">Technical & Academic Research Synthesis</option>
+              <option value="custom">Custom User-Defined JSON Schema</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="customSchemaGroup" class="form-group" style="display: none;">
+          <label for="customSchemaInput">Define Custom Target JSON Schema:</label>
+          <textarea id="customSchemaInput" rows="4">{
+  "companyName": "string",
+  "contractValue": "number",
+  "keyClauses": ["string"]
+}</textarea>
+        </div>
+
+        <button class="btn" id="runSchemaBtn">Extract Structured Schema</button>
+        <span id="schemaLoadingNotice" style="display: none; margin-left: 12px;" class="loading-indicator">
+          Extracting structured fields...
+        </span>
+
+        <div id="schemaResultsContainer" style="display: none; margin-top: 20px;">
+          <div class="panel-header" style="margin-bottom: 10px;">
+            <div class="panel-title" style="font-size: 16px;">Extraction Output</div>
+            <div class="btn-group">
+              <button class="btn btn-secondary btn-sm" id="copySchemaJsonBtn">Copy JSON</button>
+              <button class="btn btn-secondary btn-sm" id="downloadSchemaJsonBtn">Download JSON</button>
+            </div>
+          </div>
+
+          <div class="table-container" style="margin-bottom: 16px;">
+            <table id="schemaTable">
+              <thead>
+                <tr>
+                  <th style="width: 30%;">Schema Attribute</th>
+                  <th>Extracted Value</th>
+                </tr>
+              </thead>
+              <tbody id="schemaTableBody"></tbody>
+            </table>
+          </div>
+
+          <label>Raw Structured JSON Payload:</label>
+          <pre class="code-block" id="schemaRawJson"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Document Comparison -->
+    <div id="tab-compare" class="tab-pane">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Cross-Document Comparison & Synthesis</div>
+            <div class="panel-desc">Evaluate two documents side-by-side to detect clause differences, commonalities, and size variations.</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="compareDoc1">Primary Document (Document A):</label>
+            <select id="compareDoc1">
+              <option value="">-- Select Document A --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="compareDoc2">Secondary Document (Document B):</label>
+            <select id="compareDoc2">
+              <option value="">-- Select Document B --</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn" id="runCompareBtn">Execute Comparison</button>
+        <span id="compareLoadingNotice" style="display: none; margin-left: 12px;" class="loading-indicator">
+          Analyzing documents and calculating differences...
+        </span>
+
+        <div id="compareResultsContainer" style="display: none; margin-top: 20px;">
+          <div class="grid-2">
+            <div class="info-box">
+              <div class="info-box-title" id="doc1Title">Document A Profile</div>
+              <p><strong>Type:</strong> <span id="doc1Type">-</span></p>
+              <p><strong>Word Count:</strong> <span id="doc1Words">-</span></p>
+              <p><strong>Tokens:</strong> <span id="doc1Tokens">-</span></p>
+              <p><strong>Unique Terms:</strong></p>
+              <div class="entity-tag-list" id="doc1UniqueTerms"></div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title" id="doc2Title">Document B Profile</div>
+              <p><strong>Type:</strong> <span id="doc2Type">-</span></p>
+              <p><strong>Word Count:</strong> <span id="doc2Words">-</span></p>
+              <p><strong>Tokens:</strong> <span id="doc2Tokens">-</span></p>
+              <p><strong>Unique Terms:</strong></p>
+              <div class="entity-tag-list" id="doc2UniqueTerms"></div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top: 14px; background: #ffffff;">
+            <div class="panel-header">
+              <div class="panel-title" style="font-size: 16px;">Comparative Synthesis</div>
+            </div>
+            <p><strong>Lexical Similarity Rating:</strong> <span id="compareSimilarity" style="font-weight: bold;">-</span></p>
+            <p style="margin-top: 8px;"><strong>Executive Overview:</strong></p>
+            <p id="compareExecutiveSummary" style="margin-top: 4px; font-size: 15px;">-</p>
+
+            <div style="margin-top: 14px;">
+              <strong>Shared Conceptual Keywords:</strong>
+              <div class="entity-tag-list" id="compareSharedKeywords" style="margin-top: 6px;"></div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="margin-top: 14px;">
+            <div class="info-box">
+              <div class="info-box-title">Key Differences & Divergent Clauses</div>
+              <ul class="bullet-list" id="compareDifferences">
+                <li>No significant differences identified.</li>
+              </ul>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title">Synthesis & Strategic Recommendations</div>
+              <ul class="bullet-list" id="compareRecommendations">
+                <li>No recommendations generated.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 6: Settings & Model -->
+    <div id="tab-settings" class="tab-pane">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">System Configuration & AI Model Settings</div>
+            <div class="panel-desc">Configure Google Gemini multimodal API credentials or run locally in offline heuristic mode.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="geminiApiKeyInput">Google Gemini API Key (Optional):</label>
+          <input type="password" id="geminiApiKeyInput" placeholder="Enter your Gemini API key (e.g. AIzaSy...)">
+          <div style="font-size: 13px; font-style: italic; margin-top: 4px;">
+            Leave blank to operate purely in deterministic offline mode. When provided, full multimodal visual and semantic reasoning is activated.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="modelSelect">AI Model Selection:</label>
+          <select id="modelSelect">
+            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Balanced Multimodal Performance)</option>
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash (Next-Gen Multimodal Reasoning)</option>
+            <option value="gemini-1.5-pro">Gemini 1.5 Pro (Deep Document Analysis & Long Context)</option>
+          </select>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn" id="saveSettingsBtn">Save Settings</button>
+          <button class="btn btn-secondary" id="clearApiKeyBtn">Clear API Key (Switch to Offline)</button>
+        </div>
+
+        <div id="settingsNotice" style="margin-top: 14px; font-weight: bold;"></div>
+
+        <div class="info-box" style="margin-top: 20px;">
+          <div class="info-box-title">Architectural Characteristics</div>
+          <ul class="bullet-list">
+            <li><strong>Zero External Assets:</strong> Pure typography using Times New Roman only; zero external logo images, zero tracking scripts.</li>
+            <li><strong>Multimodal Ingestion:</strong> Ingests native PDFs, plain text, tabular CSVs, structured JSON, and image scans (PNG, JPG, WebP).</li>
+            <li><strong>Dual Execution Architecture:</strong> Automatic seamless failover between Google Gemini cloud vision-language models and built-in deterministic lexical retrieval.</li>
+            <li><strong>Strict Paletted Theming:</strong> Conformant with corporate system color scheme tokens.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Document Preview / Inspection Modal -->
+  <div class="modal" id="docModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modalDocTitle">Document Inspection</div>
+        <button class="modal-close" onclick="closeDocModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="modalDocMeta" style="margin-bottom: 12px; font-size: 14px;"></div>
+        <div style="font-weight: bold; margin-bottom: 6px;">Extracted Document Content:</div>
+        <pre class="code-block" id="modalDocText" style="max-height: 400px;"></pre>
+        <div style="margin-top: 14px; font-weight: bold;">Semantic Chunk Breakdown:</div>
+        <div id="modalDocChunks" style="margin-top: 8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div>Multimodal Document Intelligence Platform &bull; Corporate Enterprise Edition</div>
+    <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">Times New Roman Minimalist Interface &bull; Zero Remote Tracking &bull; Local RAG Indexer</div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
