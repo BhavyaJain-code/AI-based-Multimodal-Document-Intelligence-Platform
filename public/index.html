@@ -8,15 +8,18 @@
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header (Styled exactly as in template) -->
   <header>
     <div class="header-top">
-      <div>
-        <div class="header-title">Multimodal Document Intelligence Platform</div>
-        <div class="header-subtitle">High-Precision Text, PDF, Visual & Tabular Extraction, Analysis and Semantic RAG Engine</div>
+      <div class="header-brand-group">
+        <div class="header-brand-icon">&#9638;</div>
+        <div>
+          <div class="header-title">Multimodal Docs Intelligence</div>
+          <div class="header-subtitle">Document Management &amp; Extraction System</div>
+        </div>
       </div>
-      <div id="headerAuthStatus">
-        <span class="user-badge" id="authBadge">Secure Access Portal</span>
+      <div id="headerAuthStatus" class="header-meta-text">
+        Enterprise-grade multimodal intelligence &amp; audit control
       </div>
       <div id="headerWorkspaceStatus" class="user-status-container" style="display: none;">
         <span class="status-badge" id="engineStatusBadge">Engine: Offline Heuristic Mode</span>
@@ -27,44 +30,67 @@
     </div>
   </header>
 
-  <!-- Login & Registration Section (Positioning matches template) -->
+  <!-- Login & Registration Section (Positioning matches template exactly) -->
   <section id="authSection">
     <div class="auth-grid">
-      <!-- Left Column (Overview & Feature Cards) -->
+      <!-- Left Column (Overview & Feature Cards matching template) -->
       <div class="auth-left">
-        <div class="auth-tag">MULTIMODAL DOCUMENT INTELLIGENCE SYSTEM</div>
+        <div class="auth-icon-box">
+          <span class="auth-icon-glyph">&#9638;</span>
+        </div>
+        <div class="auth-kicker">DOCUMENT INTELLIGENCE SYSTEM</div>
         <h1 class="auth-headline">Your documents, all multimodal intelligence in one place.</h1>
         <p class="auth-lead">
-          Manage, analyze, query, and extract structured insight from PDFs, contracts, invoices, tabular data, and scanned imagery from a unified platform.
+          Manage, analyze, query, and extract structured insight from PDFs, contracts, invoices, tabular data, and scanned imagery from one unified portal.
         </p>
 
-        <div class="auth-feature-row">
-          <div class="auth-feature-title">Multimodal Ingestion</div>
-          <div class="auth-feature-desc">Direct text &amp; layout parsing of PDF, CSV, JSON, Markdown, and high-resolution document scans.</div>
-        </div>
+        <!-- Unified feature table matching template -->
+        <div class="auth-features-table">
+          <div class="auth-feature-row">
+            <div class="auth-feature-header">
+              <span class="auth-row-icon">&#9881;</span>
+              <span class="auth-feature-title">Multimodal ingestion</span>
+            </div>
+            <div class="auth-feature-desc">
+              Direct text &amp; layout parsing of PDF, CSV, JSON, Markdown, and high-resolution document scans.
+            </div>
+          </div>
 
-        <div class="auth-feature-row">
-          <div class="auth-feature-title">Semantic RAG &amp; Q&amp;A</div>
-          <div class="auth-feature-desc">Context-grounded natural language queries with verifiable source citations and confidence metrics.</div>
-        </div>
+          <div class="auth-feature-row">
+            <div class="auth-feature-header">
+              <span class="auth-row-icon">&#9998;</span>
+              <span class="auth-feature-title">Semantic RAG &amp; Q&amp;A</span>
+            </div>
+            <div class="auth-feature-desc">
+              Context-grounded natural language queries with verifiable source citations and confidence metrics.
+            </div>
+          </div>
 
-        <div class="auth-feature-row">
-          <div class="auth-feature-title">Structured Schema</div>
-          <div class="auth-feature-desc">Automated entity extraction and schema synthesis for commercial invoices, legal contracts, and reports.</div>
+          <div class="auth-feature-row">
+            <div class="auth-feature-header">
+              <span class="auth-row-icon">&#9776;</span>
+              <span class="auth-feature-title">Structured schema</span>
+            </div>
+            <div class="auth-feature-desc">
+              Automated entity extraction and schema synthesis for commercial invoices, legal contracts, and reports.
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Right Column (Login / Registration Card) -->
+      <!-- Right Column (Login / Registration Card matching template) -->
       <div class="auth-right">
         <div class="auth-card">
-          <div class="auth-card-badge">SECURE ACCESS</div>
-          <h2 class="auth-card-title" id="authCardTitle">Platform Login</h2>
+          <div class="auth-card-top-icon">
+            <span class="auth-card-icon-symbol">&#9638;</span>
+          </div>
+          <h2 class="auth-card-title" id="authCardTitle">Platform login</h2>
           <div class="auth-card-subtitle" id="authCardSubtitle">Choose your workspace role, then sign in or register.</div>
 
           <div class="auth-highlight-box">
-            <div class="auth-highlight-label">Selected Workspace</div>
+            <div class="auth-highlight-label">Selected workspace</div>
             <div class="auth-highlight-value" id="highlightWorkspaceText">Enterprise Operations &bull; Global Hub</div>
-            <div class="auth-highlight-sub">Analytical quotas, document access, and audit trails require verified workspace credentials.</div>
+            <div class="auth-highlight-sub">User access, analytical quotas, and audit trails require workspace approval.</div>
           </div>
 
           <div id="authErrorAlert" class="auth-error-box"></div>
@@ -81,7 +107,7 @@
             </div>
 
             <div class="form-group">
-              <label for="authWorkspaceSelect">Workspace / Department</label>
+              <label for="authWorkspaceSelect">Workspace / Department *</label>
               <select id="authWorkspaceSelect">
                 <option value="Enterprise Operations">Enterprise Operations &bull; Global Hub</option>
                 <option value="Legal &amp; Compliance">Legal &amp; Compliance Department</option>
@@ -102,12 +128,23 @@
               <div class="field-hint">Must be at least 8 characters containing both letters and numbers.</div>
             </div>
 
-            <button type="submit" class="btn btn-block" id="authSubmitBtn">Secure Login</button>
+            <button type="submit" class="btn btn-block" id="authSubmitBtn">&#128274; Login</button>
           </form>
 
           <div class="auth-switch-link">
             <span id="authSwitchPrompt">Not registered?</span>
             <a id="authSwitchBtn">Create an account</a>
+          </div>
+
+          <div class="demo-account-box">
+            <div><strong>Quick Evaluator Demo Access:</strong></div>
+            <div style="margin-top: 4px;">User ID: <code>analyst_admin</code> &bull; Password: <code>Password123</code></div>
+            <button type="button" class="btn btn-secondary btn-sm" id="fillDemoCredentialsBtn" style="margin-top: 8px;">One-Click Demo Sign In</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
           </div>
 
           <div class="demo-account-box">
