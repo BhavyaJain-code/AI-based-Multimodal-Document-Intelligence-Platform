@@ -541,3 +541,210 @@ footer * {
   font-weight: bold;
   color: var(--header);
 }
+
+
+/* Authentication Screen (Matches Template Layout) */
+#authSection {
+  max-width: 1220px;
+  width: 100%;
+  margin: 30px auto;
+  padding: 0 16px;
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 36px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .auth-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.auth-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  background-color: var(--body);
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 14px;
+}
+
+.auth-headline {
+  font-size: 34px;
+  font-weight: bold;
+  line-height: 1.25;
+  color: var(--header);
+  margin-bottom: 14px;
+}
+
+.auth-lead {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  color: var(--text);
+}
+
+.auth-feature-row {
+  border: 1px solid var(--border);
+  background-color: #ffffff;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .auth-feature-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+.auth-feature-title {
+  font-weight: bold;
+  font-size: 15px;
+  color: var(--header);
+  text-transform: uppercase;
+}
+
+.auth-feature-desc {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.auth-card {
+  border: 1px solid var(--border);
+  background-color: #ffffff;
+  padding: 26px 28px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.auth-card-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  background-color: var(--header);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.auth-card-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--header);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.auth-card-subtitle {
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+.auth-highlight-box {
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.auth-highlight-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: var(--navigation);
+}
+
+.auth-highlight-value {
+  font-weight: bold;
+  font-size: 14px;
+  color: var(--header);
+  margin-top: 2px;
+}
+
+.auth-highlight-sub {
+  font-size: 12px;
+  font-style: italic;
+  margin-top: 4px;
+  border-top: 1px dotted var(--border);
+  padding-top: 4px;
+}
+
+.field-hint {
+  font-size: 12px;
+  font-style: italic;
+  color: #445566;
+  margin-top: 3px;
+}
+
+.auth-error-box {
+  display: none;
+  border: 1px solid #8c3b3b;
+  background-color: #fde8e8;
+  color: #8c3b3b;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+
+.btn-block {
+  width: 100%;
+  display: block;
+  padding: 10px;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.auth-switch-link {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+.auth-switch-link a {
+  color: var(--navigation);
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.demo-account-box {
+  margin-top: 18px;
+  padding: 10px 12px;
+  border: 1px dashed var(--border);
+  background-color: var(--body);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* User header status */
+.user-status-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.user-badge {
+  font-size: 13px;
+  font-weight: bold;
+  color: #ffffff;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.1);
+}

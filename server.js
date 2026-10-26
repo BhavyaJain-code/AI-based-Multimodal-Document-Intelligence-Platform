@@ -9,6 +9,7 @@ const { parseDocument } = require('./services/documentParser');
 const ragEngine = require('./services/ragEngine');
 const aiService = require('./services/aiService');
 const { SCHEMAS } = require('./services/schemaExtractor');
+const authService = require('./services/authService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -48,6 +49,44 @@ app.get('/api/status', (req, res) => {
     activeModel: aiService.modelName,
     availableSchemas: Object.values(SCHEMAS)
   });
+});
+
+/**
+ * Authentication Endpoints
+ */
+app.post('/api/auth/register', (req, res) => {
+  try {
+    const { userId, password, role, workspace } = req.body;
+    const session = authService.register(userId, password, role, workspace);
+    res.json({ success: true, ...session });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/auth/login', (req, res) => {
+  try {
+    const { userId, password } = req.body;
+    const session = authService.login(userId, password);
+    res.json({ success: true, ...session });
+  } catch (err) {
+    res.status(401).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/auth/logout', (req, res) => {
+  const token = req.headers.authorization ? req.headers.authorization.replace('Bearer ', '') : req.body.token;
+  authService.logout(token);
+  res.json({ success: true, message: 'Logged out successfully.' });
+});
+
+app.get('/api/auth/me', (req, res) => {
+  const token = req.headers.authorization ? req.headers.authorization.replace('Bearer ', '') : req.query.token;
+  const session = authService.verifySession(token);
+  if (!session) {
+    return res.status(401).json({ error: 'Session expired or invalid.' });
+  }
+  res.json({ success: true, user: session });
 });
 
 /**

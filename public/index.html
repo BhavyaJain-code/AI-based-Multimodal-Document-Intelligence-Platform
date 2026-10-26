@@ -15,336 +15,436 @@
         <div class="header-title">Multimodal Document Intelligence Platform</div>
         <div class="header-subtitle">High-Precision Text, PDF, Visual & Tabular Extraction, Analysis and Semantic RAG Engine</div>
       </div>
-      <div>
+      <div id="headerAuthStatus">
+        <span class="user-badge" id="authBadge">Secure Access Portal</span>
+      </div>
+      <div id="headerWorkspaceStatus" class="user-status-container" style="display: none;">
         <span class="status-badge" id="engineStatusBadge">Engine: Offline Heuristic Mode</span>
         <span class="status-badge" id="docCountBadge">Documents: 0</span>
+        <span class="user-badge" id="userProfileBadge">User: -</span>
+        <button class="btn btn-secondary btn-sm" id="signOutBtn" style="color: #ffffff; border-color: #ffffff; background: rgba(255,255,255,0.15);">Sign Out</button>
       </div>
     </div>
   </header>
 
-  <!-- Navigation Bar -->
-  <nav>
-    <div class="nav-container">
-      <button class="nav-tab active" data-tab="tab-ingestion">1. Ingestion & Library</button>
-      <button class="nav-tab" data-tab="tab-intelligence">2. Document Intelligence</button>
-      <button class="nav-tab" data-tab="tab-qa">3. Multimodal Q&A (RAG)</button>
-      <button class="nav-tab" data-tab="tab-schema">4. Schema Extractor</button>
-      <button class="nav-tab" data-tab="tab-compare">5. Document Comparison</button>
-      <button class="nav-tab" data-tab="tab-settings">6. Settings & Model</button>
-    </div>
-  </nav>
+  <!-- Login & Registration Section (Positioning matches template) -->
+  <section id="authSection">
+    <div class="auth-grid">
+      <!-- Left Column (Overview & Feature Cards) -->
+      <div class="auth-left">
+        <div class="auth-tag">MULTIMODAL DOCUMENT INTELLIGENCE SYSTEM</div>
+        <h1 class="auth-headline">Your documents, all multimodal intelligence in one place.</h1>
+        <p class="auth-lead">
+          Manage, analyze, query, and extract structured insight from PDFs, contracts, invoices, tabular data, and scanned imagery from a unified platform.
+        </p>
 
-  <!-- Main Content Area -->
-  <main>
-
-    <!-- Tab 1: Ingestion & Library -->
-    <div id="tab-ingestion" class="tab-pane active">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Document Ingestion & File Processing</div>
-            <div class="panel-desc">Upload multimodal files (PDF, TXT, CSV, JSON, PNG, JPG) to index, chunk, and extract intelligence.</div>
-          </div>
-          <div class="btn-group">
-            <button class="btn btn-secondary btn-sm" id="seedSamplesBtn">Load Sample Test Suite</button>
-          </div>
+        <div class="auth-feature-row">
+          <div class="auth-feature-title">Multimodal Ingestion</div>
+          <div class="auth-feature-desc">Direct text &amp; layout parsing of PDF, CSV, JSON, Markdown, and high-resolution document scans.</div>
         </div>
 
-        <div class="dropzone" id="dropzone">
-          <div class="dropzone-title">Click to Browse or Drag and Drop Files Here</div>
-          <div class="dropzone-text">Supported formats: PDF (.pdf), Text (.txt, .md), Tabular (.csv), Structured (.json), Visual (.png, .jpg, .webp)</div>
-          <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.txt,.md,.csv,.json,.png,.jpg,.jpeg,.webp">
-          <button class="btn" type="button" onclick="document.getElementById('fileInput').click()">Select Local Files</button>
+        <div class="auth-feature-row">
+          <div class="auth-feature-title">Semantic RAG &amp; Q&amp;A</div>
+          <div class="auth-feature-desc">Context-grounded natural language queries with verifiable source citations and confidence metrics.</div>
         </div>
 
-        <div id="uploadStatusMessage" style="margin-bottom: 12px; font-weight: bold;"></div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Indexed Documents Corpus</div>
-          <button class="btn btn-secondary btn-sm" id="refreshDocsBtn">Refresh List</button>
-        </div>
-        <div class="table-container">
-          <table id="documentsTable">
-            <thead>
-              <tr>
-                <th>Document Name</th>
-                <th>Format</th>
-                <th>Classification</th>
-                <th>Words</th>
-                <th>Est. Tokens</th>
-                <th>Chunks</th>
-                <th>Uploaded</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="documentsTableBody">
-              <tr>
-                <td colspan="8" style="text-align: center; padding: 24px; font-style: italic;">No documents indexed yet. Upload files above or click "Load Sample Test Suite".</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="auth-feature-row">
+          <div class="auth-feature-title">Structured Schema</div>
+          <div class="auth-feature-desc">Automated entity extraction and schema synthesis for commercial invoices, legal contracts, and reports.</div>
         </div>
       </div>
-    </div>
 
-    <!-- Tab 2: Document Intelligence -->
-    <div id="tab-intelligence" class="tab-pane">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Deep Document Intelligence & Entity Extraction</div>
-            <div class="panel-desc">Automated categorization, executive synthesis, named entities, action items, and risk detection.</div>
+      <!-- Right Column (Login / Registration Card) -->
+      <div class="auth-right">
+        <div class="auth-card">
+          <div class="auth-card-badge">SECURE ACCESS</div>
+          <h2 class="auth-card-title" id="authCardTitle">Platform Login</h2>
+          <div class="auth-card-subtitle" id="authCardSubtitle">Choose your workspace role, then sign in or register.</div>
+
+          <div class="auth-highlight-box">
+            <div class="auth-highlight-label">Selected Workspace</div>
+            <div class="auth-highlight-value" id="highlightWorkspaceText">Enterprise Operations &bull; Global Hub</div>
+            <div class="auth-highlight-sub">Analytical quotas, document access, and audit trails require verified workspace credentials.</div>
+          </div>
+
+          <div id="authErrorAlert" class="auth-error-box"></div>
+
+          <form id="authForm" onsubmit="return false;">
+            <div class="form-group">
+              <label for="authRoleSelect">Login as</label>
+              <select id="authRoleSelect">
+                <option value="Data Analyst">Data Analyst</option>
+                <option value="Compliance Officer">Compliance Officer</option>
+                <option value="Research Scientist">Research Scientist</option>
+                <option value="System Administrator">System Administrator</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="authWorkspaceSelect">Workspace / Department</label>
+              <select id="authWorkspaceSelect">
+                <option value="Enterprise Operations">Enterprise Operations &bull; Global Hub</option>
+                <option value="Legal &amp; Compliance">Legal &amp; Compliance Department</option>
+                <option value="Financial Analytics">Financial Analytics Group</option>
+                <option value="Research &amp; Development">AI Research &amp; Development</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="authUserIdInput">User ID / Email *</label>
+              <input type="text" id="authUserIdInput" placeholder="Minimum 8 characters (e.g. analyst_admin)" minlength="8" required autocomplete="username">
+              <div class="field-hint">Must be at least 8 characters (letters, numbers, underscore, or email).</div>
+            </div>
+
+            <div class="form-group">
+              <label for="authPasswordInput">Password *</label>
+              <input type="password" id="authPasswordInput" placeholder="Minimum 8 characters" minlength="8" required autocomplete="current-password">
+              <div class="field-hint">Must be at least 8 characters containing both letters and numbers.</div>
+            </div>
+
+            <button type="submit" class="btn btn-block" id="authSubmitBtn">Secure Login</button>
+          </form>
+
+          <div class="auth-switch-link">
+            <span id="authSwitchPrompt">Not registered?</span>
+            <a id="authSwitchBtn">Create an account</a>
+          </div>
+
+          <div class="demo-account-box">
+            <div><strong>Quick Evaluator Demo Access:</strong></div>
+            <div style="margin-top: 4px;">User ID: <code>analyst_admin</code> &bull; Password: <code>Password123</code></div>
+            <button type="button" class="btn btn-secondary btn-sm" id="fillDemoCredentialsBtn" style="margin-top: 8px;">One-Click Demo Sign In</button>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <div style="display: flex; gap: 12px; align-items: flex-end; margin-bottom: 16px; flex-wrap: wrap;">
-          <div style="flex: 1; min-width: 250px;">
-            <label for="intelDocSelect">Select Target Document:</label>
-            <select id="intelDocSelect">
-              <option value="">-- Choose an indexed document --</option>
+  <!-- Main Authenticated Platform Workspace -->
+  <div id="workspaceWrapper" style="display: none;">
+    <!-- Navigation Bar -->
+    <nav>
+      <div class="nav-container">
+        <button class="nav-tab active" data-tab="tab-ingestion">1. Ingestion & Library</button>
+        <button class="nav-tab" data-tab="tab-intelligence">2. Document Intelligence</button>
+        <button class="nav-tab" data-tab="tab-qa">3. Multimodal Q&A (RAG)</button>
+        <button class="nav-tab" data-tab="tab-schema">4. Schema Extractor</button>
+        <button class="nav-tab" data-tab="tab-compare">5. Document Comparison</button>
+        <button class="nav-tab" data-tab="tab-settings">6. Settings & Model</button>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main>
+
+      <!-- Tab 1: Ingestion & Library -->
+      <div id="tab-ingestion" class="tab-pane active">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Document Ingestion & File Processing</div>
+              <div class="panel-desc">Upload multimodal files (PDF, TXT, CSV, JSON, PNG, JPG) to index, chunk, and extract intelligence.</div>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-secondary btn-sm" id="seedSamplesBtn">Load Sample Test Suite</button>
+            </div>
+          </div>
+
+          <div class="dropzone" id="dropzone">
+            <div class="dropzone-title">Click to Browse or Drag and Drop Files Here</div>
+            <div class="dropzone-text">Supported formats: PDF (.pdf), Text (.txt, .md), Tabular (.csv), Structured (.json), Visual (.png, .jpg, .webp)</div>
+            <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.txt,.md,.csv,.json,.png,.jpg,.jpeg,.webp">
+            <button class="btn" type="button" onclick="document.getElementById('fileInput').click()">Select Local Files</button>
+          </div>
+
+          <div id="uploadStatusMessage" style="margin-bottom: 12px; font-weight: bold;"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Indexed Documents Corpus</div>
+            <button class="btn btn-secondary btn-sm" id="refreshDocsBtn">Refresh List</button>
+          </div>
+          <div class="table-container">
+            <table id="documentsTable">
+              <thead>
+                <tr>
+                  <th>Document Name</th>
+                  <th>Format</th>
+                  <th>Classification</th>
+                  <th>Words</th>
+                  <th>Est. Tokens</th>
+                  <th>Chunks</th>
+                  <th>Uploaded</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="documentsTableBody">
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 24px; font-style: italic;">No documents indexed yet. Upload files above or click "Load Sample Test Suite".</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Document Intelligence -->
+      <div id="tab-intelligence" class="tab-pane">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Deep Document Intelligence & Entity Extraction</div>
+              <div class="panel-desc">Automated categorization, executive synthesis, named entities, action items, and risk detection.</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; align-items: flex-end; margin-bottom: 16px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 250px;">
+              <label for="intelDocSelect">Select Target Document:</label>
+              <select id="intelDocSelect">
+                <option value="">-- Choose an indexed document --</option>
+              </select>
+            </div>
+            <button class="btn" id="runIntelBtn">Run Intelligence Scan</button>
+          </div>
+
+          <div id="intelLoadingNotice" style="display: none; margin-bottom: 14px;" class="loading-indicator">
+            Processing document with multimodal intelligence engine... Please wait.
+          </div>
+
+          <div id="intelResultsContainer" style="display: none;">
+            <div class="grid-2">
+              <div class="info-box">
+                <div class="info-box-title">Document Classification & Confidence</div>
+                <p><strong>Detected Category:</strong> <span id="intelCategory">-</span></p>
+                <p><strong>Confidence Rating:</strong> <span id="intelConfidence">-</span></p>
+                <p><strong>Sentiment & Tone:</strong> <span id="intelTone">-</span></p>
+                <p><strong>Intelligence Provider:</strong> <span id="intelProvider">-</span></p>
+              </div>
+              <div class="info-box">
+                <div class="info-box-title">Executive Summary</div>
+                <p id="intelSummary" style="font-size: 15px; line-height: 1.6;">-</p>
+              </div>
+            </div>
+
+            <div class="panel" style="margin-top: 14px; background: #ffffff;">
+              <div class="panel-header" style="margin-bottom: 10px;">
+                <div class="panel-title" style="font-size: 16px;">Extracted Named Entities & Metrics</div>
+              </div>
+              <div class="grid-3">
+                <div class="info-box">
+                  <div class="info-box-title">Organizations & Vendors</div>
+                  <div class="entity-tag-list" id="intelOrgs"><em>None detected</em></div>
+                </div>
+                <div class="info-box">
+                  <div class="info-box-title">Dates & Deadlines</div>
+                  <div class="entity-tag-list" id="intelDates"><em>None detected</em></div>
+                </div>
+                <div class="info-box">
+                  <div class="info-box-title">Monetary Values & Currency</div>
+                  <div class="entity-tag-list" id="intelMonetary"><em>None detected</em></div>
+                </div>
+              </div>
+              <div class="grid-2" style="margin-top: 12px;">
+                <div class="info-box">
+                  <div class="info-box-title">Numerical Metrics & KPIs</div>
+                  <div class="entity-tag-list" id="intelMetrics"><em>None detected</em></div>
+                </div>
+                <div class="info-box">
+                  <div class="info-box-title">People & Roles</div>
+                  <div class="entity-tag-list" id="intelPeople"><em>None detected</em></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 14px;">
+              <div class="info-box">
+                <div class="info-box-title">Key Action Items & Next Steps</div>
+                <ul class="bullet-list" id="intelActionItems">
+                  <li>No action items extracted.</li>
+                </ul>
+              </div>
+              <div class="info-box">
+                <div class="info-box-title">Potential Compliance Risks & Ambiguities</div>
+                <ul class="bullet-list" id="intelRisks">
+                  <li>No flags reported.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Multimodal Q&A (RAG) -->
+      <div id="tab-qa" class="tab-pane">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Multimodal Document Q&A & Semantic RAG</div>
+              <div class="panel-desc">Ask natural-language questions grounded in your uploaded documents with cited source fragments.</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="qaDocScope">Query Scope:</label>
+            <select id="qaDocScope">
+              <option value="">Search Across Entire Corpus (All Documents)</option>
             </select>
           </div>
-          <button class="btn" id="runIntelBtn">Run Intelligence Scan</button>
-        </div>
 
-        <div id="intelLoadingNotice" style="display: none; margin-bottom: 14px;" class="loading-indicator">
-          Processing document with multimodal intelligence engine... Please wait.
-        </div>
+          <div class="quick-prompts">
+            <strong>Suggested Inquiries:</strong>
+            <span class="prompt-pill" onclick="setQueryPrompt('What are the payment terms, due dates, and totals?')">Payment terms & totals</span>
+            <span class="prompt-pill" onclick="setQueryPrompt('Summarize key obligations, governing law, and liabilities.')">Obligations & liabilities</span>
+            <span class="prompt-pill" onclick="setQueryPrompt('What are the benchmark conclusions and reported metrics?')">Benchmark conclusions & metrics</span>
+            <span class="prompt-pill" onclick="setQueryPrompt('List all identified parties, signatories, and contact details.')">Parties & signatories</span>
+          </div>
 
-        <div id="intelResultsContainer" style="display: none;">
+          <div class="chat-window" id="chatWindow">
+            <div class="chat-message">
+              <div class="chat-sender">System Assistant</div>
+              <div class="chat-text">Welcome to the Multimodal Document Q&A console. Select a document or search all loaded files, enter your inquiry below, and click "Submit Query".</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="qaInput" placeholder="Type your document inquiry here (e.g., What are the payment terms and totals?)...">
+            <button class="btn" id="qaSubmitBtn">Submit Query</button>
+          </div>
+          <div id="qaLoadingNotice" style="display: none; margin-top: 8px;" class="loading-indicator">
+            Synthesizing grounded response from document index...
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Schema Extractor -->
+      <div id="tab-schema" class="tab-pane">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Structured Schema Extractor</div>
+              <div class="panel-desc">Convert unstructured documents and scans into standardized JSON schemas or relational tables.</div>
+            </div>
+          </div>
+
           <div class="grid-2">
-            <div class="info-box">
-              <div class="info-box-title">Document Classification & Confidence</div>
-              <p><strong>Detected Category:</strong> <span id="intelCategory">-</span></p>
-              <p><strong>Confidence Rating:</strong> <span id="intelConfidence">-</span></p>
-              <p><strong>Sentiment & Tone:</strong> <span id="intelTone">-</span></p>
-              <p><strong>Intelligence Provider:</strong> <span id="intelProvider">-</span></p>
+            <div class="form-group">
+              <label for="schemaDocSelect">Select Document to Extract From:</label>
+              <select id="schemaDocSelect">
+                <option value="">-- Choose an indexed document --</option>
+              </select>
             </div>
-            <div class="info-box">
-              <div class="info-box-title">Executive Summary</div>
-              <p id="intelSummary" style="font-size: 15px; line-height: 1.6;">-</p>
-            </div>
-          </div>
-
-          <div class="panel" style="margin-top: 14px; background: #ffffff;">
-            <div class="panel-header" style="margin-bottom: 10px;">
-              <div class="panel-title" style="font-size: 16px;">Extracted Named Entities & Metrics</div>
-            </div>
-            <div class="grid-3">
-              <div class="info-box">
-                <div class="info-box-title">Organizations & Vendors</div>
-                <div class="entity-tag-list" id="intelOrgs"><em>None detected</em></div>
-              </div>
-              <div class="info-box">
-                <div class="info-box-title">Dates & Deadlines</div>
-                <div class="entity-tag-list" id="intelDates"><em>None detected</em></div>
-              </div>
-              <div class="info-box">
-                <div class="info-box-title">Monetary Values & Currency</div>
-                <div class="entity-tag-list" id="intelMonetary"><em>None detected</em></div>
-              </div>
-            </div>
-            <div class="grid-2" style="margin-top: 12px;">
-              <div class="info-box">
-                <div class="info-box-title">Numerical Metrics & KPIs</div>
-                <div class="entity-tag-list" id="intelMetrics"><em>None detected</em></div>
-              </div>
-              <div class="info-box">
-                <div class="info-box-title">People & Roles</div>
-                <div class="entity-tag-list" id="intelPeople"><em>None detected</em></div>
-              </div>
+            <div class="form-group">
+              <label for="schemaTypeSelect">Target Schema Definition:</label>
+              <select id="schemaTypeSelect">
+                <option value="invoice">Commercial Invoice / Billing Statement</option>
+                <option value="contract">Legal Agreement / Contract Terms</option>
+                <option value="resume">Professional Resume / CV Profile</option>
+                <option value="research">Technical & Academic Research Synthesis</option>
+                <option value="custom">Custom User-Defined JSON Schema</option>
+              </select>
             </div>
           </div>
 
-          <div class="grid-2" style="margin-top: 14px;">
-            <div class="info-box">
-              <div class="info-box-title">Key Action Items & Next Steps</div>
-              <ul class="bullet-list" id="intelActionItems">
-                <li>No action items extracted.</li>
-              </ul>
-            </div>
-            <div class="info-box">
-              <div class="info-box-title">Potential Compliance Risks & Ambiguities</div>
-              <ul class="bullet-list" id="intelRisks">
-                <li>No flags reported.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tab 3: Multimodal Q&A (RAG) -->
-    <div id="tab-qa" class="tab-pane">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Multimodal Document Q&A & Semantic RAG</div>
-            <div class="panel-desc">Ask natural-language questions grounded in your uploaded documents with cited source fragments.</div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="qaDocScope">Query Scope:</label>
-          <select id="qaDocScope">
-            <option value="">Search Across Entire Corpus (All Documents)</option>
-          </select>
-        </div>
-
-        <div class="quick-prompts">
-          <strong>Suggested Inquiries:</strong>
-          <span class="prompt-pill" onclick="setQueryPrompt('What are the payment terms, due dates, and totals?')">Payment terms & totals</span>
-          <span class="prompt-pill" onclick="setQueryPrompt('Summarize key obligations, governing law, and liabilities.')">Obligations & liabilities</span>
-          <span class="prompt-pill" onclick="setQueryPrompt('What are the benchmark conclusions and reported metrics?')">Benchmark conclusions & metrics</span>
-          <span class="prompt-pill" onclick="setQueryPrompt('List all identified parties, signatories, and contact details.')">Parties & signatories</span>
-        </div>
-
-        <div class="chat-window" id="chatWindow">
-          <div class="chat-message">
-            <div class="chat-sender">System Assistant</div>
-            <div class="chat-text">Welcome to the Multimodal Document Q&A console. Select a document or search all loaded files, enter your inquiry below, and click "Submit Query".</div>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="qaInput" placeholder="Type your document inquiry here (e.g., What are the payment terms and totals?)...">
-          <button class="btn" id="qaSubmitBtn">Submit Query</button>
-        </div>
-        <div id="qaLoadingNotice" style="display: none; margin-top: 8px;" class="loading-indicator">
-          Synthesizing grounded response from document index...
-        </div>
-      </div>
-    </div>
-
-    <!-- Tab 4: Schema Extractor -->
-    <div id="tab-schema" class="tab-pane">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Structured Schema Extractor</div>
-            <div class="panel-desc">Convert unstructured documents and scans into standardized JSON schemas or relational tables.</div>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="form-group">
-            <label for="schemaDocSelect">Select Document to Extract From:</label>
-            <select id="schemaDocSelect">
-              <option value="">-- Choose an indexed document --</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="schemaTypeSelect">Target Schema Definition:</label>
-            <select id="schemaTypeSelect">
-              <option value="invoice">Commercial Invoice / Billing Statement</option>
-              <option value="contract">Legal Agreement / Contract Terms</option>
-              <option value="resume">Professional Resume / CV Profile</option>
-              <option value="research">Technical & Academic Research Synthesis</option>
-              <option value="custom">Custom User-Defined JSON Schema</option>
-            </select>
-          </div>
-        </div>
-
-        <div id="customSchemaGroup" class="form-group" style="display: none;">
-          <label for="customSchemaInput">Define Custom Target JSON Schema:</label>
-          <textarea id="customSchemaInput" rows="4">{
+          <div id="customSchemaGroup" class="form-group" style="display: none;">
+            <label for="customSchemaInput">Define Custom Target JSON Schema:</label>
+            <textarea id="customSchemaInput" rows="4">{
   "companyName": "string",
   "contractValue": "number",
   "keyClauses": ["string"]
 }</textarea>
-        </div>
+          </div>
 
-        <button class="btn" id="runSchemaBtn">Extract Structured Schema</button>
-        <span id="schemaLoadingNotice" style="display: none; margin-left: 12px;" class="loading-indicator">
-          Extracting structured fields...
-        </span>
+          <button class="btn" id="runSchemaBtn">Extract Structured Schema</button>
+          <span id="schemaLoadingNotice" style="display: none; margin-left: 12px;" class="loading-indicator">
+            Extracting structured fields...
+          </span>
 
-        <div id="schemaResultsContainer" style="display: none; margin-top: 20px;">
-          <div class="panel-header" style="margin-bottom: 10px;">
-            <div class="panel-title" style="font-size: 16px;">Extraction Output</div>
-            <div class="btn-group">
-              <button class="btn btn-secondary btn-sm" id="copySchemaJsonBtn">Copy JSON</button>
-              <button class="btn btn-secondary btn-sm" id="downloadSchemaJsonBtn">Download JSON</button>
+          <div id="schemaResultsContainer" style="display: none; margin-top: 20px;">
+            <div class="panel-header" style="margin-bottom: 10px;">
+              <div class="panel-title" style="font-size: 16px;">Extraction Output</div>
+              <div class="btn-group">
+                <button class="btn btn-secondary btn-sm" id="copySchemaJsonBtn">Copy JSON</button>
+                <button class="btn btn-secondary btn-sm" id="downloadSchemaJsonBtn">Download JSON</button>
+              </div>
             </div>
-          </div>
 
-          <div class="table-container" style="margin-bottom: 16px;">
-            <table id="schemaTable">
-              <thead>
-                <tr>
-                  <th style="width: 30%;">Schema Attribute</th>
-                  <th>Extracted Value</th>
-                </tr>
-              </thead>
-              <tbody id="schemaTableBody"></tbody>
-            </table>
-          </div>
+            <div class="table-container" style="margin-bottom: 16px;">
+              <table id="schemaTable">
+                <thead>
+                  <tr>
+                    <th style="width: 30%;">Schema Attribute</th>
+                    <th>Extracted Value</th>
+                  </tr>
+                </thead>
+                <tbody id="schemaTableBody"></tbody>
+              </table>
+            </div>
 
-          <label>Raw Structured JSON Payload:</label>
-          <pre class="code-block" id="schemaRawJson"></pre>
+            <label>Raw Structured JSON Payload:</label>
+            <pre class="code-block" id="schemaRawJson"></pre>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Tab 5: Document Comparison -->
-    <div id="tab-compare" class="tab-pane">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Cross-Document Comparison & Synthesis</div>
-            <div class="panel-desc">Evaluate two documents side-by-side to detect clause differences, commonalities, and size variations.</div>
+      <!-- Tab 5: Document Comparison -->
+      <div id="tab-compare" class="tab-pane">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Cross-Document Comparison & Synthesis</div>
+              <div class="panel-desc">Evaluate two documents side-by-side to detect clause differences, commonalities, and size variations.</div>
+            </div>
           </div>
-        </div>
 
-        <div class="grid-2">
-          <div class="form-group">
-            <label for="compareDoc1">Primary Document (Document A):</label>
-            <select id="compareDoc1">
-              <option value="">-- Select Document A --</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="compareDoc2">Secondary Document (Document B):</label>
-            <select id="compareDoc2">
-              <option value="">-- Select Document B --</option>
-            </select>
-          </div>
-        </div>
-
-        <button class="btn" id="runCompareBtn">Execute Comparison</button>
-        <span id="compareLoadingNotice" style="display: none; margin-left: 12px;" class="loading-indicator">
-          Analyzing documents and calculating differences...
-        </span>
-
-        <div id="compareResultsContainer" style="display: none; margin-top: 20px;">
           <div class="grid-2">
-            <div class="info-box">
-              <div class="info-box-title" id="doc1Title">Document A Profile</div>
-              <p><strong>Type:</strong> <span id="doc1Type">-</span></p>
-              <p><strong>Word Count:</strong> <span id="doc1Words">-</span></p>
-              <p><strong>Tokens:</strong> <span id="doc1Tokens">-</span></p>
-              <p><strong>Unique Terms:</strong></p>
-              <div class="entity-tag-list" id="doc1UniqueTerms"></div>
+            <div class="form-group">
+              <label for="compareDoc1">Primary Document (Document A):</label>
+              <select id="compareDoc1">
+                <option value="">-- Select Document A --</option>
+              </select>
             </div>
-            <div class="info-box">
-              <div class="info-box-title" id="doc2Title">Document B Profile</div>
-              <p><strong>Type:</strong> <span id="doc2Type">-</span></p>
-              <p><strong>Word Count:</strong> <span id="doc2Words">-</span></p>
-              <p><strong>Tokens:</strong> <span id="doc2Tokens">-</span></p>
-              <p><strong>Unique Terms:</strong></p>
-              <div class="entity-tag-list" id="doc2UniqueTerms"></div>
+            <div class="form-group">
+              <label for="compareDoc2">Secondary Document (Document B):</label>
+              <select id="compareDoc2">
+                <option value="">-- Select Document B --</option>
+              </select>
             </div>
           </div>
 
-          <div class="panel" style="margin-top: 14px; background: #ffffff;">
-            <div class="panel-header">
-              <div class="panel-title" style="font-size: 16px;">Comparative Synthesis</div>
+          <button class="btn" id="runCompareBtn">Execute Comparison</button>
+          <span id="compareLoadingNotice" style="display: none; margin-left: 12px;" class="loading-indicator">
+            Analyzing documents and calculating differences...
+          </span>
+
+          <div id="compareResultsContainer" style="display: none; margin-top: 20px;">
+            <div class="grid-2">
+              <div class="info-box">
+                <div class="info-box-title" id="doc1Title">Document A Profile</div>
+                <p><strong>Type:</strong> <span id="doc1Type">-</span></p>
+                <p><strong>Word Count:</strong> <span id="doc1Words">-</span></p>
+                <p><strong>Tokens:</strong> <span id="doc1Tokens">-</span></p>
+                <p><strong>Unique Terms:</strong></p>
+                <div class="entity-tag-list" id="doc1UniqueTerms"></div>
+              </div>
+              <div class="info-box">
+                <div class="info-box-title" id="doc2Title">Document B Profile</div>
+                <p><strong>Type:</strong> <span id="doc2Type">-</span></p>
+                <p><strong>Word Count:</strong> <span id="doc2Words">-</span></p>
+                <p><strong>Tokens:</strong> <span id="doc2Tokens">-</span></p>
+                <p><strong>Unique Terms:</strong></p>
+                <div class="entity-tag-list" id="doc2UniqueTerms"></div>
+              </div>
             </div>
-            <p><strong>Lexical Similarity Rating:</strong> <span id="compareSimilarity" style="font-weight: bold;">-</span></p>
-            <p style="margin-top: 8px;"><strong>Executive Overview:</strong></p>
-            <p id="compareExecutiveSummary" style="margin-top: 4px; font-size: 15px;">-</p>
+
+            <div class="panel" style="margin-top: 14px; background: #ffffff;">
+              <div class="panel-header">
+                <div class="panel-title" style="font-size: 16px;">Comparative Synthesis</div>
+              </div>
+              <p><strong>Lexical Similarity Rating:</strong> <span id="compareSimilarity" style="font-weight: bold;">-</span></p>
+              <p style="margin-top: 8px;"><strong>Executive Overview:</strong></p>
+              <p id="compareExecutiveSummary" style="margin-top: 4px; font-size: 15px;">-</p>
 
             <div style="margin-top: 14px;">
               <strong>Shared Conceptual Keywords:</strong>
@@ -416,7 +516,8 @@
       </div>
     </div>
 
-  </main>
+    </main>
+  </div>
 
   <!-- Document Preview / Inspection Modal -->
   <div class="modal" id="docModal">

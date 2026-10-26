@@ -2,14 +2,16 @@
 
 let activeDocuments = [];
 let currentSchemaResult = null;
+let currentUser = null;
+let authToken = localStorage.getItem('docIntelAuthToken') || null;
+let isRegisterMode = false;
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   setupNavigation();
   setupUploadDropzone();
   setupEventListeners();
-  fetchStatus();
-  fetchDocuments();
+  setupAuth();
 });
 
 // --- Tab Navigation ---
@@ -35,6 +37,206 @@ function switchTab(tabId) {
   if (tabBtn) {
     tabBtn.click();
   }
+}
+
+// --- Authentication Flow ---
+async function setupAuth() {
+  const authForm = document.getElementById('authForm');
+  const authSwitchBtn = document.getElementById('authSwitchBtn');
+  const fillDemoBtn = document.getElementById('fillDemoCredentialsBtn');
+  const signOutBtn = document.getElementById('signOutBtn');
+  const workspaceSelect = document.getElementById('authWorkspaceSelect');
+
+  if (workspaceSelect) {
+    workspaceSelect.addEventListener('change', () => {
+      const highlight = document.getElementById('highlightWorkspaceText');
+      if (highlight) {
+        highlight.textContent = workspaceSelect.options[workspaceSelect.selectedIndex].text;
+      }
+    });
+  }
+
+  if (authSwitchBtn) {
+    authSwitchBtn.addEventListener('click', toggleAuthMode);
+  }
+
+  if (fillDemoBtn) {
+    fillDemoBtn.addEventListener('click', () => {
+      document.getElementById('authUserIdInput').value = 'analyst_admin';
+      document.getElementById('authPasswordInput').value = 'Password123';
+      handleAuthSubmit();
+    });
+  }
+
+  if (authForm) {
+    authForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleAuthSubmit();
+    });
+  }
+
+  const authSubmitBtn = document.getElementById('authSubmitBtn');
+  if (authSubmitBtn) {
+    authSubmitBtn.addEventListener('click', handleAuthSubmit);
+  }
+
+  if (signOutBtn) {
+    signOutBtn.addEventListener('click', handleLogout);
+  }
+
+  // Check existing session
+  if (authToken) {
+    try {
+      const res = await fetch('/api/auth/me', {
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.user) {
+        setAuthenticatedState(data.user);
+        return;
+      }
+    } catch (e) {
+      console.warn('Session verification error, resetting session.');
+    }
+    // Invalid token
+    localStorage.removeItem('docIntelAuthToken');
+    authToken = null;
+  }
+
+  setLoggedOutState();
+}
+
+function toggleAuthMode() {
+  isRegisterMode = !isRegisterMode;
+  const title = document.getElementById('authCardTitle');
+  const subtitle = document.getElementById('authCardSubtitle');
+  const submitBtn = document.getElementById('authSubmitBtn');
+  const prompt = document.getElementById('authSwitchPrompt');
+  const switchBtn = document.getElementById('authSwitchBtn');
+  const errorAlert = document.getElementById('authErrorAlert');
+
+  errorAlert.style.display = 'none';
+
+  if (isRegisterMode) {
+    title.textContent = 'Create Workspace Account';
+    subtitle.textContent = 'Register your corporate credentials with 8+ character validation.';
+    submitBtn.textContent = 'Register Account';
+    prompt.textContent = 'Already registered?';
+    switchBtn.textContent = 'Sign in to existing account';
+  } else {
+    title.textContent = 'Platform Login';
+    subtitle.textContent = 'Choose your workspace role, then sign in or register.';
+    submitBtn.textContent = 'Secure Login';
+    prompt.textContent = 'Not registered?';
+    switchBtn.textContent = 'Create an account';
+  }
+}
+
+function validateAuthInputs(userId, password) {
+  if (!userId || userId.trim().length < 8) {
+    return 'User ID must be at least 8 characters long.';
+  }
+  if (!password || password.length < 8) {
+    return 'Password must be at least 8 characters long.';
+  }
+  const hasLetter = /[a-zA-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  if (!hasLetter || !hasNumber) {
+    return 'Password must contain at least one letter and at least one number.';
+  }
+  return null;
+}
+
+async function handleAuthSubmit() {
+  const userId = document.getElementById('authUserIdInput').value.trim();
+  const password = document.getElementById('authPasswordInput').value;
+  const role = document.getElementById('authRoleSelect').value;
+  const workspace = document.getElementById('authWorkspaceSelect').value;
+  const errorAlert = document.getElementById('authErrorAlert');
+  const submitBtn = document.getElementById('authSubmitBtn');
+
+  const clientError = validateAuthInputs(userId, password);
+  if (clientError) {
+    errorAlert.textContent = clientError;
+    errorAlert.style.display = 'block';
+    return;
+  }
+
+  errorAlert.style.display = 'none';
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Authenticating...';
+
+  const endpoint = isRegisterMode ? '/api/auth/register' : '/api/auth/login';
+
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, password, role, workspace })
+    });
+
+    const data = await res.json();
+    submitBtn.disabled = false;
+    submitBtn.textContent = isRegisterMode ? 'Register Account' : 'Secure Login';
+
+    if (res.ok && data.success) {
+      authToken = data.token;
+      localStorage.setItem('docIntelAuthToken', authToken);
+      setAuthenticatedState(data.user);
+    } else {
+      errorAlert.textContent = data.error || 'Authentication failed. Please verify your credentials.';
+      errorAlert.style.display = 'block';
+    }
+  } catch (err) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = isRegisterMode ? 'Register Account' : 'Secure Login';
+    errorAlert.textContent = 'Network or server error: ' + err.message;
+    errorAlert.style.display = 'block';
+  }
+}
+
+function setAuthenticatedState(user) {
+  currentUser = user;
+  document.getElementById('authSection').style.display = 'none';
+  document.getElementById('workspaceWrapper').style.display = 'block';
+  document.getElementById('headerAuthStatus').style.display = 'none';
+  document.getElementById('headerWorkspaceStatus').style.display = 'flex';
+
+  const userBadge = document.getElementById('userProfileBadge');
+  if (userBadge) {
+    userBadge.textContent = `${user.userId} (${user.role || 'Analyst'})`;
+  }
+
+  // Load platform workspace data
+  fetchStatus();
+  fetchDocuments();
+}
+
+async function handleLogout() {
+  if (authToken) {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: authToken })
+      });
+    } catch (e) {
+      console.warn('Logout network notice:', e);
+    }
+  }
+
+  authToken = null;
+  currentUser = null;
+  localStorage.removeItem('docIntelAuthToken');
+  setLoggedOutState();
+}
+
+function setLoggedOutState() {
+  document.getElementById('authSection').style.display = 'block';
+  document.getElementById('workspaceWrapper').style.display = 'none';
+  document.getElementById('headerAuthStatus').style.display = 'block';
+  document.getElementById('headerWorkspaceStatus').style.display = 'none';
+  document.getElementById('authPasswordInput').value = '';
 }
 
 // --- Fetch Platform Status ---
