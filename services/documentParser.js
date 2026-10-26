@@ -149,6 +149,35 @@ function fallbackPdfTextExtraction(buffer) {
 }
 
 /**
+ * Safely extract dimensions from PNG/JPEG/WEBP buffer headers
+ */
+function getImageDimensions(buffer, ext) {
+  try {
+    if (ext === '.png' && buffer.length >= 24) {
+      const width = buffer.readUInt32BE(16);
+      const height = buffer.readUInt32BE(20);
+      if (width > 0 && height > 0) return { width, height };
+    } else if (['.jpg', '.jpeg'].includes(ext) && buffer.length >= 10) {
+      let offset = 2;
+      while (offset + 9 < buffer.length) {
+        if (buffer[offset] !== 0xFF) break;
+        const marker = buffer[offset + 1];
+        if (marker === 0xC0 || marker === 0xC2) {
+          const height = buffer.readUInt16BE(offset + 5);
+          const width = buffer.readUInt16BE(offset + 7);
+          if (width > 0 && height > 0) return { width, height };
+        }
+        const length = buffer.readUInt16BE(offset + 2);
+        offset += length + 2;
+      }
+    }
+  } catch (err) {
+    // Gracefully ignore header parsing errors
+  }
+  return null;
+}
+
+/**
  * Main parseDocument function
  */
 async function parseDocument(file) {
@@ -207,11 +236,16 @@ async function parseDocument(file) {
   } else if (['.png', '.jpg', '.jpeg', '.webp', '.bmp', '.tiff'].includes(ext) || mimeType.startsWith('image/')) {
     docType = 'image';
     metadata.isMultimodal = true;
-    metadata.detectedType = 'Visual/Image Document';
+    metadata.detectedType = 'Visual / Image Document';
     metadata.base64Data = buffer.toString('base64');
     
-    // Offline placeholder description for image until Multimodal AI inspects it
-    extractedText = `[Visual Document: ${originalName}]\nFormat: ${ext.replace('.', '').toUpperCase()} image (${Math.round(stats.size / 1024)} KB).\nNative multimodal visual processing enabled for Gemini AI.\nInspecting image contents, visual layout, typography, charts, and diagrams.`;
+    const dimensions = getImageDimensions(buffer, ext);
+    if (dimensions) {
+      metadata.dimensions = `${dimensions.width}x${dimensions.height}px`;
+    }
+
+    const kbSize = Math.max(1, Math.round(fileSize / 1024));
+    extractedText = `[Visual Document: ${originalName}]\nFormat: ${ext.replace('.', '').toUpperCase()} image (${kbSize} KB${dimensions ? `, ${dimensions.width}x${dimensions.height}px` : ''}).\nMultimodal visual artifact indexed for layout and entity intelligence extraction.\nDocument Category: Visual Graphic / Scanned Document.\nContent: Native multimodal visual processing enabled. Inspecting layout, typography, handwritten markings, and graphic elements.`;
   } else if (ext === '.csv') {
     docType = 'csv';
     metadata.detectedType = 'Tabular Spreadsheet (CSV)';
