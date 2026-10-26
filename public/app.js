@@ -1,5 +1,10 @@
 // Multimodal Document Intelligence Platform Client Logic
 
+// Auto-detect backend port: Route requests to port 3000 if opened on VS Code Live Server (port 5500)
+const API_BASE = (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '3000'))
+  ? 'http://localhost:3000'
+  : '';
+
 let activeDocuments = [];
 let currentSchemaResult = null;
 let currentUser = null;
@@ -87,16 +92,18 @@ async function setupAuth() {
   // Check existing session
   if (authToken) {
     try {
-      const res = await fetch('/api/auth/me', {
+      const res = await fetch(`${API_BASE}/api/auth/me`, {
         headers: { 'Authorization': `Bearer ${authToken}` }
       });
-      const data = await res.json();
-      if (res.ok && data.success && data.user) {
-        setAuthenticatedState(data.user);
-        return;
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.user) {
+          setAuthenticatedState(data.user);
+          return;
+        }
       }
     } catch (e) {
-      console.warn('Session verification error, resetting session.');
+      console.warn('Session verification notice:', e);
     }
     // Invalid token
     localStorage.removeItem('docIntelAuthToken');
@@ -171,7 +178,7 @@ async function handleAuthSubmit() {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Authenticating...';
 
-  const endpoint = isRegisterMode ? '/api/auth/register' : '/api/auth/login';
+  const endpoint = isRegisterMode ? `${API_BASE}/api/auth/register` : `${API_BASE}/api/auth/login`;
 
   try {
     const res = await fetch(endpoint, {
@@ -180,22 +187,33 @@ async function handleAuthSubmit() {
       body: JSON.stringify({ userId, password, role, workspace })
     });
 
-    const data = await res.json();
+    const rawText = await res.text();
+    let data = null;
+    try {
+      data = rawText ? JSON.parse(rawText) : null;
+    } catch {
+      data = null;
+    }
+
     submitBtn.disabled = false;
     submitBtn.textContent = isRegisterMode ? 'Register Account' : 'Secure Login';
 
-    if (res.ok && data.success) {
+    if (res.ok && data && data.success) {
       authToken = data.token;
       localStorage.setItem('docIntelAuthToken', authToken);
       setAuthenticatedState(data.user);
     } else {
-      errorAlert.textContent = data.error || 'Authentication failed. Please verify your credentials.';
+      if (res.status === 405) {
+        errorAlert.textContent = 'Port 5500 is a static previewer. Please run "npm run dev" in your terminal and open http://localhost:3000 in your browser.';
+      } else {
+        errorAlert.textContent = (data && data.error) ? data.error : (rawText || `Server error (Status ${res.status})`);
+      }
       errorAlert.style.display = 'block';
     }
   } catch (err) {
     submitBtn.disabled = false;
     submitBtn.textContent = isRegisterMode ? 'Register Account' : 'Secure Login';
-    errorAlert.textContent = 'Network or server error: ' + err.message;
+    errorAlert.textContent = 'Could not connect to Node.js backend. Please ensure "npm run dev" is running in your terminal at http://localhost:3000.';
     errorAlert.style.display = 'block';
   }
 }
@@ -220,7 +238,7 @@ function setAuthenticatedState(user) {
 async function handleLogout() {
   if (authToken) {
     try {
-      await fetch('/api/auth/logout', {
+      await fetch(`${API_BASE}/api/auth/logout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: authToken })
@@ -247,7 +265,7 @@ function setLoggedOutState() {
 // --- Fetch Platform Status ---
 async function fetchStatus() {
   try {
-    const res = await fetch('/api/status');
+    const res = await fetch(`${API_BASE}/api/status`);
     const data = await res.json();
 
     const statusBadge = document.getElementById('engineStatusBadge');
@@ -268,7 +286,7 @@ async function fetchStatus() {
 // --- Fetch and Render Documents ---
 async function fetchDocuments() {
   try {
-    const res = await fetch('/api/documents');
+    const res = await fetch(`${API_BASE}/api/documents`);
     const data = await res.json();
     activeDocuments = data.documents || [];
     renderDocumentsTable(activeDocuments);
@@ -399,7 +417,7 @@ async function uploadFiles(fileList) {
   }
 
   try {
-    const res = await fetch('/api/upload', {
+    const res = await fetch(`${API_BASE}/api/upload`, {
       method: 'POST',
       body: formData
     });
@@ -431,7 +449,7 @@ async function uploadFiles(fileList) {
 async function deleteDocument(docId) {
   if (!confirm('Are you sure you want to remove this document from the intelligence corpus?')) return;
   try {
-    const res = await fetch(`/api/documents/${docId}`, { method: 'DELETE' });
+    const res = await fetch(`${API_BASE}/api/documents/${docId}`, { method: 'DELETE' });
     const data = await res.json();
     if (data.success) {
       fetchDocuments();
@@ -443,7 +461,7 @@ async function deleteDocument(docId) {
 
 async function inspectDocument(docId) {
   try {
-    const res = await fetch(`/api/documents/${docId}`);
+    const res = await fetch(`${API_BASE}/api/documents/${docId}`);
     const doc = await res.json();
 
     document.getElementById('modalDocTitle').textContent = `Inspection: ${doc.fileName}`;
@@ -502,7 +520,7 @@ async function runIntelligenceAnalysis() {
   resultsContainer.style.display = 'none';
 
   try {
-    const res = await fetch(`/api/documents/${docId}/analyze`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/documents/${docId}/analyze`, { method: 'POST' });
     const data = await res.json();
     loadingNotice.style.display = 'none';
 
@@ -578,7 +596,7 @@ async function submitQuery() {
   loadingNotice.style.display = 'inline-block';
 
   try {
-    const res = await fetch('/api/query', {
+    const res = await fetch(`${API_BASE}/api/query`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ question, docId: docScope || null })
@@ -653,7 +671,7 @@ async function runSchemaExtraction() {
   resultsContainer.style.display = 'none';
 
   try {
-    const res = await fetch('/api/schema/extract', {
+    const res = await fetch(`${API_BASE}/api/schema/extract`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ docId, schemaType, customSchema: customDef })
@@ -718,7 +736,7 @@ async function runDocumentComparison() {
   resultsContainer.style.display = 'none';
 
   try {
-    const res = await fetch('/api/compare', {
+    const res = await fetch(`${API_BASE}/api/compare`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ docId1, docId2 })
@@ -777,7 +795,7 @@ async function seedSampleSuite() {
   statusMsg.style.color = 'var(--header)';
 
   try {
-    const res = await fetch('/api/seed-samples', { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/seed-samples`, { method: 'POST' });
     const data = await res.json();
     if (data.success) {
       statusMsg.textContent = `Successfully seeded ${data.seeded.length} sample documents into index.`;
