@@ -264,8 +264,6 @@ async function fetchStatus() {
     console.error('Status fetch error:', err);
   }
 }
-  }
-}
 
 // --- Fetch and Render Documents ---
 async function fetchDocuments() {
