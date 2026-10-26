@@ -29,18 +29,19 @@ class AuthService {
     }
 
     // Ensure default demo user exists
-    if (!this.users.has('analyst_admin')) {
+    const demoEmail = 'analyst@enterprise.com';
+    if (!this.users.has(demoEmail)) {
       const salt = crypto.randomBytes(16).toString('hex');
       const passwordHash = this.hashPassword('Password123', salt);
       const defaultUser = {
-        userId: 'analyst_admin',
+        userId: demoEmail,
         salt,
         passwordHash,
         role: 'Data Analyst',
         workspace: 'Enterprise Operations',
         createdAt: new Date().toISOString()
       };
-      this.users.set('analyst_admin', defaultUser);
+      this.users.set(demoEmail, defaultUser);
       this.saveUsers();
     }
   }
@@ -54,15 +55,16 @@ class AuthService {
     }
   }
 
-  validateCredentials(userId, password) {
-    if (!userId || typeof userId !== 'string' || userId.trim().length < 8) {
-      return { valid: false, message: 'User ID must be at least 8 characters long.' };
-    }
+  isValidEmail(email) {
+    if (!email || typeof email !== 'string') return false;
+    const trimmed = email.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(trimmed);
+  }
 
-    const trimmedUser = userId.trim();
-    const userRegex = /^[a-zA-Z0-9._%+-@]{8,50}$/;
-    if (!userRegex.test(trimmedUser)) {
-      return { valid: false, message: 'User ID contains invalid characters. Use letters, numbers, or standard email characters.' };
+  validateCredentials(userId, password) {
+    if (!userId || !this.isValidEmail(userId)) {
+      return { valid: false, message: 'Please provide a valid email address (e.g. user@example.com).' };
     }
 
     if (!password || typeof password !== 'string' || password.length < 8) {
@@ -87,7 +89,7 @@ class AuthService {
 
     const key = userId.trim().toLowerCase();
     if (this.users.has(key)) {
-      throw new Error('An account with this User ID already exists. Please sign in or use another User ID.');
+      throw new Error('An account with this email address already exists. Please sign in or use another email.');
     }
 
     const salt = crypto.randomBytes(16).toString('hex');
@@ -125,18 +127,22 @@ class AuthService {
 
   login(userId, password) {
     if (!userId || !password) {
-      throw new Error('Please provide both User ID and Password.');
+      throw new Error('Please provide both email address and password.');
+    }
+
+    if (!this.isValidEmail(userId)) {
+      throw new Error('Please provide a valid email address.');
     }
 
     const key = userId.trim().toLowerCase();
     const user = this.users.get(key);
     if (!user) {
-      throw new Error('Invalid User ID or Password.');
+      throw new Error('Invalid email address or password.');
     }
 
     const hash = this.hashPassword(password, user.salt);
     if (hash !== user.passwordHash) {
-      throw new Error('Invalid User ID or Password.');
+      throw new Error('Invalid email address or password.');
     }
 
     const token = crypto.randomBytes(32).toString('hex');

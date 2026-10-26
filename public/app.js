@@ -62,7 +62,7 @@ async function setupAuth() {
 
   if (fillDemoBtn) {
     fillDemoBtn.addEventListener('click', () => {
-      document.getElementById('authUserIdInput').value = 'analyst_admin';
+      document.getElementById('authUserIdInput').value = 'analyst@enterprise.com';
       document.getElementById('authPasswordInput').value = 'Password123';
       handleAuthSubmit();
     });
@@ -119,22 +119,27 @@ function toggleAuthMode() {
 
   if (isRegisterMode) {
     title.textContent = 'Create Workspace Account';
-    subtitle.textContent = 'Register your corporate credentials with 8+ character validation.';
+    subtitle.textContent = 'Register with your verified email address and password.';
     submitBtn.textContent = 'Register Account';
     prompt.textContent = 'Already registered?';
     switchBtn.textContent = 'Sign in to existing account';
   } else {
-    title.textContent = 'Platform Login';
+    title.textContent = 'Platform login';
     subtitle.textContent = 'Choose your workspace role, then sign in or register.';
-    submitBtn.textContent = 'Secure Login';
+    submitBtn.textContent = 'Login';
     prompt.textContent = 'Not registered?';
     switchBtn.textContent = 'Create an account';
   }
 }
 
-function validateAuthInputs(userId, password) {
-  if (!userId || userId.trim().length < 8) {
-    return 'User ID must be at least 8 characters long.';
+function isValidEmail(email) {
+  if (!email || typeof email !== 'string') return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+function validateAuthInputs(email, password) {
+  if (!email || !isValidEmail(email)) {
+    return 'Please enter a valid email address (e.g. user@example.com).';
   }
   if (!password || password.length < 8) {
     return 'Password must be at least 8 characters long.';
