@@ -251,23 +251,19 @@ async function fetchStatus() {
     const data = await res.json();
 
     const statusBadge = document.getElementById('engineStatusBadge');
-    if (data.isOnlineAi) {
-      statusBadge.textContent = `Engine: Gemini AI (${data.activeModel})`;
-      statusBadge.style.backgroundColor = 'rgba(46, 204, 113, 0.2)';
-    } else {
-      statusBadge.textContent = 'Engine: Offline Heuristic Mode';
+    if (statusBadge) {
+      statusBadge.textContent = 'Engine: Autonomous Local Mode';
       statusBadge.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
     }
 
     const docCountBadge = document.getElementById('docCountBadge');
-    docCountBadge.textContent = `Documents: ${data.documentCount}`;
-
-    if (data.activeModel) {
-      const modelSelect = document.getElementById('modelSelect');
-      if (modelSelect) modelSelect.value = data.activeModel;
+    if (docCountBadge) {
+      docCountBadge.textContent = `Documents: ${data.documentCount || 0}`;
     }
   } catch (err) {
     console.error('Status fetch error:', err);
+  }
+}
   }
 }
 
@@ -776,37 +772,6 @@ async function runDocumentComparison() {
   }
 }
 
-// --- Tab 6: Settings Management ---
-async function saveSettings() {
-  const apiKey = document.getElementById('geminiApiKeyInput').value;
-  const model = document.getElementById('modelSelect').value;
-  const notice = document.getElementById('settingsNotice');
-
-  try {
-    const res = await fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ apiKey, model })
-    });
-    const data = await res.json();
-    if (data.success) {
-      notice.textContent = data.isOnlineAi 
-        ? `Settings saved. Active multimodal model: ${data.activeModel}`
-        : 'Settings saved. Operating in Offline Heuristic Mode.';
-      notice.style.color = '#1b5e20';
-      fetchStatus();
-    }
-  } catch (err) {
-    notice.textContent = 'Failed to update settings: ' + err.message;
-    notice.style.color = '#b71c1c';
-  }
-}
-
-async function clearApiKey() {
-  document.getElementById('geminiApiKeyInput').value = '';
-  await saveSettings();
-}
-
 // --- Seed Sample Test Suite ---
 async function seedSampleSuite() {
   const statusMsg = document.getElementById('uploadStatusMessage');
@@ -848,8 +813,6 @@ function setupEventListeners() {
 
   document.getElementById('runSchemaBtn').addEventListener('click', runSchemaExtraction);
   document.getElementById('runCompareBtn').addEventListener('click', runDocumentComparison);
-  document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
-  document.getElementById('clearApiKeyBtn').addEventListener('click', clearApiKey);
 
   // Copy and download buttons for schema
   document.getElementById('copySchemaJsonBtn').addEventListener('click', () => {

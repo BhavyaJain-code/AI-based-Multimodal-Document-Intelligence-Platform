@@ -156,7 +156,6 @@
         <button class="nav-tab" data-tab="tab-qa">3. Multimodal Q&A (RAG)</button>
         <button class="nav-tab" data-tab="tab-schema">4. Schema Extractor</button>
         <button class="nav-tab" data-tab="tab-compare">5. Document Comparison</button>
-        <button class="nav-tab" data-tab="tab-settings">6. Settings & Model</button>
       </div>
     </nav>
 
@@ -486,58 +485,12 @@
               </ul>
             </div>
             <div class="info-box">
-              <div class="info-box-title">Synthesis & Strategic Recommendations</div>
+              <div class="info-box-title">Synthesis &amp; Strategic Recommendations</div>
               <ul class="bullet-list" id="compareRecommendations">
                 <li>No recommendations generated.</li>
               </ul>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tab 6: Settings & Model -->
-    <div id="tab-settings" class="tab-pane">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">System Configuration & AI Model Settings</div>
-            <div class="panel-desc">Configure Google Gemini multimodal API credentials or run locally in offline heuristic mode.</div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="geminiApiKeyInput">Google Gemini API Key (Optional):</label>
-          <input type="password" id="geminiApiKeyInput" placeholder="Enter your Gemini API key (e.g. AIzaSy...)">
-          <div style="font-size: 13px; font-style: italic; margin-top: 4px;">
-            Leave blank to operate purely in deterministic offline mode. When provided, full multimodal visual and semantic reasoning is activated.
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="modelSelect">AI Model Selection:</label>
-          <select id="modelSelect">
-            <option value="gemini-1.5-flash">Gemini 1.5 Flash (Balanced Multimodal Performance)</option>
-            <option value="gemini-2.0-flash">Gemini 2.0 Flash (Next-Gen Multimodal Reasoning)</option>
-            <option value="gemini-1.5-pro">Gemini 1.5 Pro (Deep Document Analysis & Long Context)</option>
-          </select>
-        </div>
-
-        <div class="btn-group">
-          <button class="btn" id="saveSettingsBtn">Save Settings</button>
-          <button class="btn btn-secondary" id="clearApiKeyBtn">Clear API Key (Switch to Offline)</button>
-        </div>
-
-        <div id="settingsNotice" style="margin-top: 14px; font-weight: bold;"></div>
-
-        <div class="info-box" style="margin-top: 20px;">
-          <div class="info-box-title">Architectural Characteristics</div>
-          <ul class="bullet-list">
-            <li><strong>Zero External Assets:</strong> Pure typography using Times New Roman only; zero external logo images, zero tracking scripts.</li>
-            <li><strong>Multimodal Ingestion:</strong> Ingests native PDFs, plain text, tabular CSVs, structured JSON, and image scans (PNG, JPG, WebP).</li>
-            <li><strong>Dual Execution Architecture:</strong> Automatic seamless failover between Google Gemini cloud vision-language models and built-in deterministic lexical retrieval.</li>
-            <li><strong>Strict Paletted Theming:</strong> Conformant with corporate system color scheme tokens.</li>
-          </ul>
         </div>
       </div>
     </div>
