@@ -254,8 +254,11 @@ label {
 }
 
 input[type="text"],
+input[type="email"],
 input[type="password"],
 input[type="file"],
+input[type="search"],
+input[type="number"],
 select,
 textarea {
   width: 100%;
